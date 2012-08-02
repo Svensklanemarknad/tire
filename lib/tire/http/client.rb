@@ -52,9 +52,9 @@ module Tire
         def self.perform(response)
           begin
             Response.new response.body, response.code, response.headers
-          rescue RestClient::ServerBrokeConnection
+          rescue 
             retry if r = (r || 0) + 1 and r < 5
-            raise
+            raise "perform retried 5 times #{$!.to_s}"
           end
         end
 
