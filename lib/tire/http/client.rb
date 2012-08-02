@@ -50,7 +50,12 @@ module Tire
         private
 
         def self.perform(response)
-          Response.new response.body, response.code, response.headers
+          begin
+            Response.new response.body, response.code, response.headers
+          rescue RestClient::ServerBrokeConnection
+            retry if r = (r || 0) + 1 and r < 5
+            raise
+          end
         end
 
       end
