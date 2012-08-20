@@ -30,14 +30,16 @@ module Tire
         private
 
         def self.request(method, url, data = nil)
-          perform ::RestClient::Request.execute(method: method, url: url, payload: data)
-        rescue ::RestClient::ServerBrokeConnection
-          retry if r = (r || 0) + 1 and r < 5
-          raise "perform retried 5 times #{$!.to_s}"
-        rescue *ConnectionExceptions
-          raise
-        rescue ::RestClient::Exception => e
-          Response.new e.http_body, e.http_code
+          begin
+            perform ::RestClient::Request.execute(method: method, url: url, payload: data)
+          rescue ::RestClient::ServerBrokeConnection
+            r = (r || 0) + 1 and r < 5
+            raise "perform tried #{r} times #{$!.to_s}"
+          rescue *ConnectionExceptions
+            raise
+          rescue ::RestClient::Exception => e
+            Response.new e.http_body, e.http_code
+          end
         end
 
         def self.perform(response)
