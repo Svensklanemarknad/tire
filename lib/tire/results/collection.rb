@@ -60,7 +60,7 @@ module Tire
             end
 
             # Reorder records to preserve order from search results
-            @response['hits']['hits'].map { |item| records[item['_type']].detect { |record| record.id.to_s == item['_id'].to_s } }
+            @response['hits']['hits'].map { |item| records[item['_type']].detect { |record| record.id.to_s == item['_id'].to_s } }.compact
           end
         end
       end
