@@ -33,7 +33,7 @@ module Tire
           begin
             perform ::RestClient::Request.execute(method: method, url: url, payload: data)
           rescue ::RestClient::ServerBrokeConnection
-            r = (r || 0) + 1 and r < 5
+            retry if (r = (r || 0) + 1 and r < 5)
             raise "perform tried #{r} times #{$!.to_s}"
           rescue *ConnectionExceptions
             raise
